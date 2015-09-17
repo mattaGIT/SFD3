@@ -1,0 +1,64 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" docType="html-5.0" language="en-US" applyHTMLTag="false" applyBodyTag="false">
+    <head>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"></meta>
+        <!-- styling -->
+        <apex:stylesheet value="{!URLFOR($Resource.nvd3, 'build/nv.d3.css')}"></apex:stylesheet>
+        <!-- end -->
+        <apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'dist/css/bootstrap.css')}"></apex:stylesheet>
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
+        svg {
+            display: block;
+        }
+        html, body, #chart, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    </head>
+
+        <body>
+<div id="chart" class='with-3d-shadow with-transitions'>
+    <svg></svg>
+</div>
+
+<script>
+
+    nv.addGraph(function() {
+        var chart = nv.models.lineWithFocusChart();
+
+        chart.xAxis.tickFormat(d3.format(',f'));
+        chart.x2Axis.tickFormat(d3.format(',f'));
+        chart.yAxis.tickFormat(d3.format(',.2f'));
+        chart.y2Axis.tickFormat(d3.format(',.2f'));
+
+        d3.select('#chart svg')
+            .datum(testData())
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+    });
+
+    function testData() {
+        return stream_layers(3,128,.1).map(function(data, i) {
+            return {
+                key: 'Stream' + i,
+                area: i === 1,
+                values: data
+            };
+        });
+    }
+
+</script>
+    <apex:includescript value="{!URLFOR($Resource.d3, 'd3.min.js')}"></apex:includescript>
+    <apex:includescript value="{!URLFOR($Resource.nvd3, 'build/nv.d3.js')}"></apex:includescript>
+    <apex:includescript value="{!URLFOR($Resource.examples, 'examples/lib/stream_layers.js')}"></apex:includescript>
+    </body>
+</apex:page>
